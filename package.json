@@ -1,8 +1,10 @@
 {
-  "name": "Desktop",
+  "name": "blogs",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "repository": "git@github.com:cms1214/blogs.git",
+  "author": "唐自豪 <1487046534@qq.com>",
   "devDependencies": {
     "vuepress": "^2.0.0-beta.53"
   },
