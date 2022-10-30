@@ -1,109 +1,154 @@
-# 指南<前端设计模式与框架应用>
+# 缓冲动画
+::: tip
+此时笨比唐自豪在第一节课并不知道何为封装，只模糊的晓得一些概念
+:::
 
-## 模态框安装
-
-### 直接用 `<script>` 引入
-直接下载和使用 `<link>`和`<script>` 标签引入，使用最新版本：
->css & js
-
-[modalbox.css](http://cms1214.xyz/dist/css/modalbox.css "模态框css")
-[modalbox.js](http://cms1214.xyz/dist/js/modalbox.js "模态框js")
-
-### 链接
+根据以往的经验，只需要把创建dom元素，css和逻辑代码全部写进一个js文件里面，新建一个html，再引入这个js，功能就理所应当的实现啦！
 
 ``` html
-<link rel="stylesheet" href="http://cms1214.xyz/dist/css/modalbox.css">
-```
-
-``` html
-<script src="http://cms1214.xyz/dist/js/modalbox.js"></script>
-```
-
-## 快速上手
-### 创建一个 ModalBox 实例
-``` js
-const box = new ModalBox({
-    // 选项
-})
-```
-
-### 绑定`html`标签
-`<button id="open">打开</button>`
-``` js
-new ModalBox({
-    el: '#open'
-})
+<body>
+    <button class="on-load" >开始加载</button>
+    <button class="stop-on-load">停止加载</button>
+    
+    <script src="./js/onLoad.js"></script>
+</body>
 ```
 
 ::: tip
-到这一步时,已经可以点击按钮打开模态框了，为默认状态
+然而他狂妄地认为老师布置的作业样式很简单，于是花了大半儿的精力去死磕动画
 :::
 
-## 配置
+动画确实搞了很久，最终经历了三版，终于改出了稍微满意的效果。
 
-### 模态框的标题与内容
-``` js
-new ModalBox({
-    el: '#open',
-    title:'自定义标题',
-    content:'自定义内容'
-})
-```
+![演示动画](/images/web/loading.gif)
 
-### 自定义模态框按钮
->添加buttons，配置一个name为“确定”的按钮
+代码如下：
 ``` js
-new ModalBox({
-    el:'.open',
-    title:'这个是标题',
-    content:'这个是内容',
-    buttons:{
-        b1:{
-            name:"确定"
-        }
+function onLoad(stopTime,rotateSpeed,timer,c1,c2,c3,c4){
+    if(document.querySelector(".onload")!=null) return;
+    // 创建元素
+    var main = document.createElement("div")
+    var mainCube = document.createElement("div")
+
+    // 添加元素
+    document.body.prepend(main)
+    main.appendChild(mainCube)
+
+    // 设置类名与css
+    main.setAttribute("class","onload")
+    mainCube.setAttribute("class","onload-center")
+    main.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `
+    mainCube.style.cssText = `
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        height: 100px;
+        width: 100px;
+    `
+
+    var color = [c1,c2,c3,c4]
+    for(var i=0; i<4; i++){ // 四个span
+        var cube = document.createElement("span")
+        mainCube.appendChild(cube)
+        cube.style.cssText = `
+            height: 45px;
+            width: 45px;
+            transition: 2s;
+            border-radius: 5px;
+            background-color: ${color[i]};
+        `
     }
-})
+
+
+    // 旋转
+    var rotate = 0
+    setInterval(function(){
+        rotate+=rotateSpeed;
+        mainCube.style.setProperty("rotate",rotate+'deg')
+    },10)
+
+    // 变化
+    var cubes = mainCube.children
+    cubes[0].style.transform = "scale("+1+")"
+    cubes[1].style.transform = "scale("+0.8+")"
+    cubes[2].style.transform = "scale("+0.8+")"
+    cubes[3].style.transform = "scale("+0.6+")"
+
+
+    var timer1,timer2;
+    function t1(){
+        cubes[0].style.transform = "scale("+0.6+")"
+        cubes[3].style.transform = "scale("+1+")"
+        timer2=setTimeout(t2,timer);
+    }
+    function t2(){
+        cubes[0].style.transform = "scale("+1+")"
+        cubes[3].style.transform = "scale("+0.6+")"
+        timer1=setTimeout(t1,timer);
+    }
+    timer1=setTimeout(t1,1);
+
+
+    var timer3,timer4;
+    var waitTime = timer/2
+    function t3(){
+        cubes[1].style.transform = "scale("+0.6+")"
+        cubes[2].style.transform = "scale("+1+")"
+        timer4=setTimeout(t4,timer);
+    }
+    function t4(){
+        cubes[1].style.transform = "scale("+1+")"
+        cubes[2].style.transform = "scale("+0.6+")"
+        timer3=setTimeout(t3,timer);
+    }
+    setTimeout(function(){
+        timer3=setTimeout(t3,1);
+    },waitTime)
+
+
+    setTimeout(function(){
+        stopOnLoad()
+    },stopTime)
+}
+
+
+
+// 停止加载
+function stopOnLoad(){
+    if(document.querySelector(".onload")==null) return;
+    document.getElementsByClassName("onload")[0].remove()
+    for(i=1;i<=100;i++){
+        clearInterval(i);
+        clearTimeout(i)
+    }
+}
+
+// 默认主题
+function defaultLoad(){
+    onLoad(5000,0.3,1500,"#919e8c","#d87d7c","#d6ab81","#6f7073")
+}
+
+
+// 类名
+var onloadC = document.getElementsByClassName("on-load")
+onloadC[0].onclick = function(){defaultLoad()}
+
+var stopOnloadC = document.getElementsByClassName("stop-on-load")
+stopOnloadC[0].onclick = function(){stopOnLoad()}
+
+
+document.body.style.backgroundColor = "#fff8ee"
 ```
 
-### 更多可选自定义项
->自定义按钮名称，背景颜色，调用函数
-``` js
-new ModalBox({
-    el:'.open',
-    title:'这个是标题',
-    content:'这个是内容',
-    buttons:{
-        b1:{
-            name:"确定",
-            bgColor:"#007bff",
-            func(){
-                console.log("点击了确定按钮");
-            }
-        }
-    }
-})
-```
-
-### 多个按钮
-``` js
-new ModalBox({
-    el:'.open',
-    title:'这个是标题',
-    content:'这个是内容',
-    buttons:{
-        b1:{
-            name:"取消",
-            func(){
-                console.log("点击了取消按钮");
-            }
-        },
-        b2:{
-            name:"确定",
-            bgColor:"#007bff",
-            func(){
-                console.log("点击了确定按钮");
-            }
-        }
-    }
-})
-```
+如你所见，css也被塞了进去，和dom操作挤成一坨。这并不是真正意义上的封装，改变出现在几节课后。
