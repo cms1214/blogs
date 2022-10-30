@@ -2,10 +2,10 @@
 home: true
 heroImage: /images/hero.png
 heroText: 无限进步
-
+tagline: 对象的__proto__保存着该对象的构造函数的prototype
 actions:
   - text: 前端啊
-    link: /zh/guide/getting-started.html
+    link: /web/
     type: primary
   - text: Unity 百炼成仙
     link: /unity/
