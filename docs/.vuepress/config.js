@@ -32,9 +32,24 @@ export default defineUserConfig({
       '/web/': [
         {
           text: '前端设计模式与框架应用',
-          children: ['/web/README.md','/web/modalbox/README.md'],
+          children: [
+            '/web/README.md',
+            '/web/modalbox/README.md'
+          ],
         },
       ],
+      '/python/': [
+        {
+          text: 'Python',
+          children: [
+            '/python/README.md',
+            '/python/qcode/README.md',
+            '/python/craw/README.md',
+            '/python/download/README.md',
+            '/python/file-ext/README.md',
+          ],
+        },
+      ]
     },
   }),
 })
