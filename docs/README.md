@@ -1,5 +1,6 @@
 ---
 home: true
+title: 首页
 heroImage: /images/hero.png
 heroText: 无限进步
 tagline: 对象的__proto__保存着该对象的构造函数的prototype
